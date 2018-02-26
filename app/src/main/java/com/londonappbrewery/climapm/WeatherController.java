@@ -85,9 +85,34 @@ public class WeatherController extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d("Clima", "onResume() called");
-        getWeatherForCurrentLoction();
+        Intent myintent = getIntent();
+        String city = myintent.getStringExtra("City");
+
+        if (city != null ){
+            getWeatherForNewCity(city);
+
+        } else {
+
+            getWeatherForCurrentLoction();
+        }
+    }
+
+
+
+
+
+    // TODO: Add getWeatherForNewCity(String city) here:
+    private void getWeatherForNewCity(String city){
+
+    RequestParams params = new RequestParams();
+    params.put("q",city);
+    params.put("appid",APP_ID);
+    letsDoSomeNetworking(params);
 
     }
+
+
+    // TODO: Add getWeatherForCurrentLocation() here:
 
     private void getWeatherForCurrentLoction() {
         Log.d("Clima", "Getting weather for current location");
@@ -154,15 +179,14 @@ public class WeatherController extends AppCompatActivity {
             } else {
                 Log.d("Clima","Permissions denied ");
             }
-
-
         }
     }
-// TODO: Add getWeatherForNewCity(String city) here:
 
 
 
-    // TODO: Add getWeatherForCurrentLocation() here:
+
+
+
 
 
 
@@ -208,5 +232,9 @@ public class WeatherController extends AppCompatActivity {
     // TODO: Add onPause() here:
 
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mlocationManager !=null) mlocationManager.removeUpdates(mlocationListener);
+    }
 }
