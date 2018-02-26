@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,6 +69,13 @@ public class WeatherController extends AppCompatActivity {
 
 
         // TODO: Add an OnClickListener to the changeCityButton here:
+        changeCityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WeatherController.this, ChangeCityController.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -164,14 +173,16 @@ public class WeatherController extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.e("Clima","Succes ! Jason:"+ response.toString());
+                Log.e("Clima","Succes ! Json:"+ response.toString());
 
+                WeatherDataModel weatherDataModel = WeatherDataModel.fromJson(response);
+                updateUI(weatherDataModel);
 
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
-                Log.e("Clima","Fail"+ e.toString());
+                Log.e("Clima","Fail "+ e.toString());
                 Log.d("Clima","Sataus code"+ statusCode);
                 Toast.makeText(WeatherController.this , "Requset Faild"
                         , Toast.LENGTH_SHORT).show();
@@ -185,6 +196,12 @@ public class WeatherController extends AppCompatActivity {
 
 
     // TODO: Add updateUI() here:
+    private void updateUI (WeatherDataModel weatherDataModel){
+    mCityLabel.setText(weatherDataModel.getmCity());
+    mTemperatureLabel.setText(weatherDataModel.getmTemperature());
+    int resourceID = getResources().getIdentifier(weatherDataModel.getmIconName(),"drawable",getPackageName());
+    mWeatherImage.setImageResource(resourceID);
+    }
 
 
 
