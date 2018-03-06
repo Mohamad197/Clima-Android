@@ -2,6 +2,7 @@ package com.londonappbrewery.climapm;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
+import dmax.dialog.SpotsDialog;
 
 
 public class WeatherController extends AppCompatActivity {
@@ -50,6 +52,8 @@ public class WeatherController extends AppCompatActivity {
     TextView mCityLabel;
     ImageView mWeatherImage;
     TextView mTemperatureLabel;
+    static  AlertDialog dialog;
+
 
     // TODO: Declare a LocationManager and a LocationListener here:
     LocationManager mlocationManager;
@@ -62,6 +66,7 @@ public class WeatherController extends AppCompatActivity {
         setContentView(R.layout.weather_controller_layout);
 
         // Linking the elements in the layout to Java code
+        dialog = new SpotsDialog(this,"Loading");
         mCityLabel = (TextView) findViewById(R.id.locationTV);
         mWeatherImage = (ImageView) findViewById(R.id.weatherSymbolIV);
         mTemperatureLabel = (TextView) findViewById(R.id.tempTV);
@@ -103,7 +108,6 @@ public class WeatherController extends AppCompatActivity {
 
     // TODO: Add getWeatherForNewCity(String city) here:
     private void getWeatherForNewCity(String city){
-
     RequestParams params = new RequestParams();
     params.put("q",city);
     params.put("appid",APP_ID);
@@ -115,6 +119,7 @@ public class WeatherController extends AppCompatActivity {
     // TODO: Add getWeatherForCurrentLocation() here:
 
     private void getWeatherForCurrentLoction() {
+        dialog.show();
         Log.d("Clima", "Getting weather for current location");
 
         mlocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -201,6 +206,8 @@ public class WeatherController extends AppCompatActivity {
 
                 WeatherDataModel weatherDataModel = WeatherDataModel.fromJson(response);
                 updateUI(weatherDataModel);
+                dialog.dismiss();
+
 
             }
 
